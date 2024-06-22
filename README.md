@@ -1,6 +1,6 @@
 # CS3560-a2-summer2024
-The original project path for this was originally:<br>
-a2
+The original project path for this was originally:
+- a2
 - src
 	- all source files
 
