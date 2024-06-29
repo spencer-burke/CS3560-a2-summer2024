@@ -42,10 +42,10 @@ public class JAdminView extends JFrame {
         JTextArea groupID = new JTextArea("Group Id");
 
         // Create a panel for the buttons and set its layout
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 7));
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 9));
         
         // Add 7 buttons to the button panel
-        for (int i = 1; i <= 7; i++) {
+        for (int i = 1; i <= 9; i++) {
             JButton button = new JButton("Button " + i);
             if (i == 1) {
                 // Add action listener to open UserView on button press
@@ -80,40 +80,23 @@ public class JAdminView extends JFrame {
                     	String txtUserID = userID.getText();
                     	// get group id if there is one
                     	String txtGroupID = groupID.getText();
-                    	// check if userID is valid and groupID is valid
-                    	if (manager.getUserList().contains(new User(txtUserID)) || !manager.getGroupList().contains(new UserGroup(txtGroupID))) {
-                    		if (!manager.getGroupList().contains(new UserGroup(txtGroupID))) {
-                        		JDialog dialog = new JDialog(dialogFrame, "Error Dialog");
-                        		dialog.setSize(250, 250);
-                        		dialog.add(new Label("Error Group Does Not Exist"));
-                        		dialog.setVisible(true);
-                    		}
-                    		else {
-                    			JDialog dialog = new JDialog(dialogFrame, "Error Dialog");
-                    			dialog.setSize(250, 250);
-                    			dialog.add(new Label("Error User Already Exists"));
-                    			dialog.setVisible(true);
-                    		}
-                    	}
-                    	else {
-                    		User newUser = new User(txtUserID, txtGroupID);
-                    		// add it to the manager
-                    		manager.addUser(newUser);
-                    		// add it to the tree
-                    		// get index for group
-                    		int groupIndex = 0;
-                    		ArrayList<UserGroup> groups = manager.getGroupList();
-                    		for (int i = 0; i < groups.size(); i++) {
-                    			if (groups.get(i).getID().equals(txtGroupID))
-                    				groupIndex = i;
-                    		}
-                    		System.out.printf("Group adding to %d\n", groupIndex);
-                    		// create the node
-                    		DefaultMutableTreeNode node = new DefaultMutableTreeNode(newUser.getID());
-                    		// add to the tree and make it visible
-                    		model.insertNodeInto(node, treeList.get(groupIndex), treeList.get(groupIndex).getChildCount());
-                    		tree.scrollPathToVisible(new TreePath(node.getPath()));
-                    	}
+                		User newUser = new User(txtUserID, txtGroupID);
+                		// add it to the manager
+                		manager.addUser(newUser);
+                		// add it to the tree
+                		// get index for group
+                		int groupIndex = 0;
+                		ArrayList<UserGroup> groups = manager.getGroupList();
+                		for (int i = 0; i < groups.size(); i++) {
+                			if (groups.get(i).getID().equals(txtGroupID))
+                				groupIndex = i;
+                		}
+                		System.out.printf("Group adding to %d\n", groupIndex);
+                		// create the node
+                		DefaultMutableTreeNode node = new DefaultMutableTreeNode(newUser.getID());
+                		// add to the tree and make it visible
+                		model.insertNodeInto(node, treeList.get(groupIndex), treeList.get(groupIndex).getChildCount());
+                		tree.scrollPathToVisible(new TreePath(node.getPath()));
                     }
                 });
                 button.setText("Add User");
@@ -127,26 +110,15 @@ public class JAdminView extends JFrame {
                     	String txtGroupID = groupID.getText();
                     	// make new object
                     	UserGroup newGroup = new UserGroup(txtGroupID);
-                    	// make sure it's unique
-                    	if (manager.getGroupList().contains(newGroup)) {
-                    		JDialog dialog = new JDialog(dialogFrame, "Error Dialog");
-                    		dialog.setSize(250, 250);
-                    		dialog.add(new Label("Error Group Already Exists"));
-                    		dialog.setVisible(true);
-                    	}
-                    	else {
-                    		System.out.printf("adding %s\n", newGroup.getID());
-                    		// add the group to the manager
-                    		manager.addGroup(newGroup);
-                    		// make new tree node
-                    		DefaultMutableTreeNode node = new DefaultMutableTreeNode(newGroup.getID());
-                    		// update the tree
-                    		model.insertNodeInto(node, treeList.get(treeList.size()-1), treeList.get(treeList.size()-1).getChildCount());
-                    		// update tree list
-                    		treeList.add(node);
-                    		tree.scrollPathToVisible(new TreePath(node.getPath()));
-                    	}
-
+                		// add the group to the manager
+                		manager.addGroup(newGroup);
+                		// make new tree node
+                		DefaultMutableTreeNode node = new DefaultMutableTreeNode(newGroup.getID());
+                		// update the tree
+                		model.insertNodeInto(node, treeList.get(treeList.size()-1), treeList.get(treeList.size()-1).getChildCount());
+                		// update tree list
+                		treeList.add(node);
+                		tree.scrollPathToVisible(new TreePath(node.getPath()));
                     }
                 });
                 button.setText("Add Group");
@@ -202,6 +174,44 @@ public class JAdminView extends JFrame {
                     }
                 });
                 button.setText("Show Positive Percentage");
+            }
+            if (i == 8) {
+                // Add action listener to open UserView on button press
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	String validateMessage = manager.validateIDs();
+                    	if (validateMessage.equals(""))
+                    		validateMessage = "No errors found";
+                    	
+                		JDialog dialog = new JDialog(dialogFrame, "Show ID Validation");
+                		dialog.setSize(250, 250);
+                		dialog.add(new Label(validateMessage));
+                		dialog.setVisible(true);
+                    }
+                });
+                button.setText("Show ID Validation");
+            }
+            if (i == 9) {
+                // Add action listener to open UserView on button press
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	String lastUpdateMessage;
+                    	User userWithLastUpdate = manager.getLastUpdatedUser();
+                    	
+                    	if (userWithLastUpdate != null)
+                    		lastUpdateMessage = "The last updated user is " + userWithLastUpdate.getID();
+                    	else
+                    		lastUpdateMessage = "No users to update";
+                    	
+                		JDialog dialog = new JDialog(dialogFrame, "Last Updated User");
+                		dialog.setSize(250, 250);
+                		dialog.add(new Label(lastUpdateMessage));
+                		dialog.setVisible(true);
+                    }
+                });
+                button.setText("Last Updated User");
             }
             buttonPanel.add(button);
         }

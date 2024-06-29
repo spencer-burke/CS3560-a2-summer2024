@@ -2,6 +2,8 @@ package mainpackage;
 
 import java.util.ArrayList;
 
+import javax.swing.JTextArea;
+
 public class User implements Comparable {
 	private String id;
 	private String groupID;
@@ -9,6 +11,8 @@ public class User implements Comparable {
 	private ArrayList<User> followings;
 	private ArrayList<String> feed;
 	private ArrayList<String> personalMessages;
+	private long creationTime;
+	private long lastUpdateTime;
 	
 	/**
 	 * Constructor for the User class
@@ -21,6 +25,8 @@ public class User implements Comparable {
 		this.followings = new ArrayList<User>();
 		this.feed = new ArrayList<String>();
 		this.personalMessages = new ArrayList<String>();
+		creationTime = System.currentTimeMillis();
+		lastUpdateTime = 0;
 	}
 	
 	/**
@@ -35,6 +41,8 @@ public class User implements Comparable {
 		this.followings = new ArrayList<User>();
 		this.feed = new ArrayList<String>();
 		this.personalMessages = new ArrayList<String>();
+		creationTime = System.currentTimeMillis();
+		lastUpdateTime = 0;
 	}
 
 	/**
@@ -91,6 +99,37 @@ public class User implements Comparable {
 	 */
 	public ArrayList<User> getFollowing() { return followings; }
 	
+	/**
+	 * Get the creation time of the object
+	 * @return the creation time
+	 */
+	public long getCreationTime() { return creationTime; }
+	
+	/**
+	 * Get the last update time of the object
+	 * @return the last update time
+	 */
+	public long getLastUpdateTime() { return lastUpdateTime; }
+	
+	/**
+	 * Update the time last updated to the current time
+	 */
+	public void update() { lastUpdateTime =  System.currentTimeMillis(); }
+	
+	/**
+	 * Checks if id has a space in it
+	 * @return true if there is a space in the id
+	 */
+	public boolean idHasSpace() {
+		char curr;
+		for (int i = 0; i < id.length(); i++) {
+			curr = id.charAt(i);
+			if (curr == ' ')
+				return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public int compareTo(Object o) {
 		// TODO Auto-generated method stub
@@ -102,7 +141,7 @@ public class User implements Comparable {
 	@Override
 	public boolean equals(Object o) {
 		if (o != null && o instanceof User)
-			return id.compareTo( ( (User)o ).id ) == 0;
+			return id.compareTo( ( (User) o ).id ) == 0;
 		return false;
 	}
 	

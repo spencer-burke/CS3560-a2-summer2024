@@ -2,6 +2,8 @@ package mainpackage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
 
 public class MessageManager {
 	private ArrayList<User> totalUsers;
@@ -88,4 +90,69 @@ public class MessageManager {
 	 * @return the positivity count
 	 */
 	public int getPositivityCount() { return positivityCount; }
+	
+	/**
+	 * Validate user id's to make sure there are no violations
+	 * @return error string representing the violations in id rules
+	 */
+	public String validateIDs() {
+		String result = "";
+		ArrayList<String> errorMessageList = new ArrayList<String>();
+		// check if users have spaces
+		for(User curr : totalUsers) {
+			if (curr.idHasSpace())
+				errorMessageList.add("User has a space");
+		}
+		// check if groups have spaces		
+		for(UserGroup curr : totalGroups) {
+			if (curr.idHasSpace())
+				errorMessageList.add("Group has a space");
+		}
+		/* check if there are duplicate ids */
+		// make a giant list of id's from users and groups
+		ArrayList<String> totalIDs = new ArrayList<String>();
+		for (User curr : totalUsers)
+			totalIDs.add(curr.getID());
+		
+		for (UserGroup curr : totalGroups)
+			totalIDs.add(curr.getID());
+		
+		// convert list to set
+		Set<String> theIDSet = new HashSet<String>(totalIDs);
+		// compare set length to list length and detect if there are duplicates
+		if (theIDSet.size() != totalIDs.size())
+			errorMessageList.add("There is a duplicate id");
+		
+		// build the final error message from the list
+		if (errorMessageList.size() == 0)
+			result = "There are no current id errors";
+		else {
+			for (int i = 0; i < errorMessageList.size(); i++) {
+				if (i == errorMessageList.size() - 1 )
+					result += errorMessageList.get(i);
+				else
+					result += errorMessageList.get(i) + " and ";
+			}
+		}
+		return result;
+	}
+	
+	
+	public User getLastUpdatedUser() {
+		User result = null;
+		
+		if (totalUsers.size() == 0)
+			return null;
+		
+		long currentUpdateTime = totalUsers.get(0).getLastUpdateTime();
+		// go through users
+		for (User curr : totalUsers) {
+			if (curr.getLastUpdateTime() >= currentUpdateTime) {
+				result = curr;
+				currentUpdateTime = curr.getLastUpdateTime();
+			}
+		}
+		// get largest 
+		return result;
+	}
 }

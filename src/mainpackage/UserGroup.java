@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class UserGroup implements Comparable {
 	private ArrayList<User> usersInGroup;
 	private String groupID;
+	private long creationTime;
 	
 	/**
 	 * The constructor used to place a group in the root group
@@ -12,15 +13,34 @@ public class UserGroup implements Comparable {
 	public UserGroup(String arg) {
 		usersInGroup = new ArrayList<User>();
 		groupID = arg;
+		creationTime =  System.currentTimeMillis();
 	}
 
 	/**
-	 * add a user to this group
+	 * Add a user to this group
 	 * @param arg the user to add
 	 */
 	public void addUserToGroup(User arg) { usersInGroup.add(arg); }
 
+	/**
+	 * Get the UserGroup id
+	 * @return the UserGroup id
+	 */
 	public String getID() { return groupID; }
+	
+	/**
+	 * Checks if id has a space in it
+	 * @return true if there is a space in the id
+	 */
+	public boolean idHasSpace() {
+		char curr;
+		for (int i = 0; i < groupID.length(); i++) {
+			curr = groupID.charAt(i);
+			if (curr == ' ')
+				return true;
+		}
+		return false;
+	}
 	
 	@Override
 	public int compareTo(Object o) {

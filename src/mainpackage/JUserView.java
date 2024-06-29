@@ -45,8 +45,11 @@ class JUserView extends JFrame {
         for (User currFollow : arg.getFollowing())
         	currentFollowingModel.addElement(currFollow.getID());
         
+        // Add the text panel at the beginning so it can be updated
+        JTextArea updateTextField = new JTextArea("");
+        
         // Create a panel for the buttons
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 4)); 
         for (int i = 1; i <= 2; i++) {
             JButton button = new JButton("Button " + i);
             if (i == 1) {
@@ -94,10 +97,14 @@ class JUserView extends JFrame {
                 	   String[] stringToParse = message.trim().split("\\s+");
                 	   updatePositivity(manager, stringToParse);
                 	   
-                	// go through followings, and update feed
-                	ArrayList<User> followers = arg.getFollowers();
-                	for (User curr : followers)
-                		curr.addMessage(message);
+                	   // go through followings, and update feed
+                	   ArrayList<User> followers = arg.getFollowers();
+                	   for (User curr : followers) {
+                		   curr.addMessage(message);
+                		   curr.update();
+                	   }
+                	   arg.update();
+                	   updateTextField.setText("Update time: " + Long.toString(arg.getLastUpdateTime()));
                    }
                });
                button.setText("Post Tweet");
@@ -105,12 +112,19 @@ class JUserView extends JFrame {
            buttonPanel.add(button);
         }
         
-
+        // Create the text area to display the creation time
+        JTextArea creationTextField = new JTextArea("");
+        buttonPanel.add(creationTextField);
+        creationTextField.setText("Creation time: " + Long.toString(arg.getCreationTime()));
+        
+        // Create the text area to display the update time
+        buttonPanel.add(updateTextField);
+        updateTextField.setText("Update time: " + Long.toString(arg.getLastUpdateTime()));
+        
         // Create a panel for the list views and set its layout
         JPanel listPanel = new JPanel(new GridLayout(1, 2));
         listPanel.add(new JScrollPane(currentFollowing));
         listPanel.add(new JScrollPane(feed));
-
         // Add components to the content pane
         add(buttonPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
@@ -120,6 +134,11 @@ class JUserView extends JFrame {
         setVisible(true);
     }
     
+    /**
+     * Update the positivity of the message for manager
+     * @param manager the manager object to keep track of users and groups
+     * @param words the split list of words to parse
+     */
     private void updatePositivity(MessageManager manager, String[] words) {
  	   for (String curr : words)
 		   if (curr.equals("great") || curr.equals("cool")) {
