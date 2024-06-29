@@ -103,6 +103,8 @@ class JUserView extends JFrame {
                 		   curr.addMessage(message);
                 		   curr.update();
                 	   }
+
+			   // Since the project spec says "user who made last update" update the user posting the tweet last
                 	   arg.update();
                 	   updateTextField.setText("Update time: " + Long.toString(arg.getLastUpdateTime()));
                    }
